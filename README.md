@@ -1,2 +1,3 @@
 # SQL-
-List of Assignments and Projects that I have done as part of my learning SQL for Data Analysis
+List of Exercises and Projects that I have done as part of my learning SQL for Data Analysis
+1.Exercises -Code with Mosh (Complete SQL Mastery)

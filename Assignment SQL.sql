@@ -147,3 +147,14 @@ SELECT
 FROM customers 
 WHERE points >3000
 ORDER BY Name;
+
+-- Inserting Multiple Rows
+INSERT INTO products (name, quantity_in_stock, unit_price)
+VALUES('Cricket Bat',100 , 3.25),
+		('Hoodies', 50, 5.00 ),
+        ('Snickers', 200 , 1.50);
+        
+-- Inserting Hierarchical Rows
+INSERT INTO orders (customer_id, order_date, status)
+VALUES( 10, '2020-05-04', 2),
+	  (3, '2020-06-01', 1)

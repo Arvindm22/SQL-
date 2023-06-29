@@ -4,7 +4,7 @@ This repository contains a collection of exercises and projects that I have comp
 
 ## Exercises
 
-1.Code with Mosh - Complete SQL Mastery
+1.[Code with Mosh - Complete SQL Mastery](https://github.com/Arvindm22/SQL-/blob/main/Assignment%20SQL.sql)
 
 **Description**: This course by Code with Mosh covers various SQL concepts and provides hands-on exercises to practice querying and manipulating data.
 

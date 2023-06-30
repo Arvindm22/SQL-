@@ -153,8 +153,31 @@ INSERT INTO products (name, quantity_in_stock, unit_price)
 VALUES('Cricket Bat',100 , 3.25),
 		('Hoodies', 50, 5.00 ),
         ('Snickers', 200 , 1.50);
-        
--- Inserting Hierarchical Rows
-INSERT INTO orders (customer_id, order_date, status)
-VALUES( 10, '2020-05-04', 2),
-	  (3, '2020-06-01', 1)
+
+-- Subqueries and creating copy of a table
+CREATE TABLE invoices_archived AS
+SELECT 
+	c.name AS Client_name,
+    i.invoice_id,
+    i.number,
+    i.invoice_total,
+    i.payment_total,
+    i.invoice_date,
+    i.due_date,
+    i.payment_date
+FROM clients c
+JOIN invoices i USING(client_id)
+WHERE payment_date IS NOT NULL;
+
+-- Updating Multiple Rows
+UPDATE customers
+SET points=points+50
+WHERE birth_date < '1990-01-01' ;
+
+-- Subqueries in UPDATES
+UPDATE orders
+SET comments = "Gold Customer"
+WHERE customer_id IN
+			(SELECT c.customer_id
+			FROM customers c
+			WHERE points>3000)

@@ -180,4 +180,95 @@ SET comments = "Gold Customer"
 WHERE customer_id IN
 			(SELECT c.customer_id
 			FROM customers c
-			WHERE points>3000)
+			WHERE points>3000);
+            
+-- AGGREGATE FUNCTIONS
+SELECT 
+		'First half of 2019' AS date_range,
+        SUM(invoice_total) AS total_sales,
+        SUM(payment_total) AS total_payments,
+        SUM(invoice_total - payment_total) AS Difference
+FROM invoices
+WHERE invoice_date BETWEEN '2019-01-01' AND '2019-06-30'
+UNION
+SELECT 
+		'Second half of 2019' AS date_range,
+        SUM(invoice_total) AS total_sales,
+        SUM(payment_total) AS total_payments,
+        SUM(invoice_total - payment_total) AS Difference
+FROM invoices
+WHERE invoice_date BETWEEN '2019-07-01' AND '2019-12-31'
+UNION
+SELECT 
+		'Total Year' AS date_range,
+        SUM(invoice_total) AS total_sales,
+        SUM(payment_total) AS total_payments,
+        SUM(invoice_total - payment_total) AS Difference
+FROM invoices
+WHERE invoice_date BETWEEN '2019-01-01' AND '2019-12-31';
+
+-- GROUP BY CLAUSE
+SELECT 
+		p.date,
+        pm.name AS payment_method,
+        SUM(p.amount) AS Total_payment
+FROM payments p
+JOIN payment_methods pm ON
+			p.payment_method = pm.payment_method_id
+GROUP BY date, pm.name
+ORDER BY date;
+
+-- Having Clause
+SELECT 
+		c.first_name,
+		c.customer_id,
+		c.state,
+        SUM(oi.quantity * oi.unit_price) AS Total_amount
+FROM customers c
+JOIN orders o  USING(customer_id)
+JOIN order_items oi USING (order_id)
+GROUP BY c.customer_id, c.state
+HAVING state = 'VA' AND Total_amount > 100;
+
+-- ROLLUP Operator
+SELECT
+		pm.name as Payment_method,
+        SUM(p.amount) AS Total_amount
+FROM payments p
+JOIN payment_methods pm ON
+				p.payment_method = pm.payment_method_id
+GROUP BY pm.name with rollup;
+
+-- SUBQUERIES
+SELECT 
+		employee_id,
+        first_name,
+        last_name
+FROM employees       
+WHERE salary >(
+SELECT 
+		avg(salary)
+FROM employees
+);
+
+-- IN OPERATOR 
+SELECT *
+FROM clients
+WHERE client_id NOT IN (
+		SELECT DISTINCT client_id
+        FROM invoices
+        );
+        
+
+SELECT 
+	customer_id, 
+    first_name, 
+    last_name
+FROM customers
+WHERE customer_id in  (
+	SELECT o.customer_id
+    FROM order_items
+    JOIN orders o  USING(order_id)
+    WHERE product_id=3
+)
+ORDER BY customer_id

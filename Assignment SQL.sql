@@ -259,7 +259,6 @@ WHERE client_id NOT IN (
         FROM invoices
         );
         
-
 SELECT 
 	customer_id, 
     first_name, 
@@ -271,4 +270,60 @@ WHERE customer_id in  (
     JOIN orders o  USING(order_id)
     WHERE product_id=3
 )
-ORDER BY customer_id
+ORDER BY customer_id;
+
+-- CORRELATED SUBQUERIES
+SELECT *
+FROM invoices i
+WHERE invoice_total > (
+		Select AVG(invoice_total)
+        FROM invoices
+        WHERE client_id = i.client_id
+        );
+-- Exists Operator
+SELECT *
+FROM products p
+WHERE NOT EXISTS (
+	SELECT product_id
+    FROM order_items
+    WHERE product_id =p.product_id
+);
+
+-- Subqueries in SELECT Clause
+SELECT 
+		client_id,
+        name,
+        (Select sum(invoice_total) 
+		FROM invoices
+        WHERE client_id = c.client_id ) AS Total_sales,
+        (Select avg(invoice_total) FROM invoices) AS Average,
+        (Select Total_sales - Average) AS Difference
+FROM clients c;
+
+-- IFNULL AND COALESCE FUNCTIONS
+SELECT 
+		CONCAT(first_name, ' ', last_name) AS Customer_name,
+		IFNULL(phone,'Unknown') AS Contact_no
+FROM customers;
+
+-- IF Function
+SELECT
+		DISTINCT product_id,
+        name AS Product,
+        COUNT(*) AS Orders,
+        IF (COUNT(*) > 1, 'Many Times', 'Once') AS Frequency
+FROM products P
+JOIN order_items USING(product_id)
+GROUP BY product_id, name;
+
+-- CASE OPERATOR
+SELECT 
+		CONCAT(first_name, ' ', last_name) AS Customer_name,
+        points,
+        CASE
+			WHEN points > 3000 THEN 'Gold'
+            WHEN points > 2000 THEN 'Silver'
+            ELSE 'Bronze'
+		END AS Category
+FROM customers
+ORDER BY points

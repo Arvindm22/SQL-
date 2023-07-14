@@ -326,4 +326,57 @@ SELECT
             ELSE 'Bronze'
 		END AS Category
 FROM customers
-ORDER BY points
+ORDER BY points;
+
+-- Views
+CREATE OR REPLACE VIEW client_balance AS
+	SELECT 
+			client_id,
+            name AS customer,
+            SUM((invoice_total - payment_total)) AS Balance
+	FROM clients
+    JOIN invoices USING (client_id)
+    GROUP BY client_id, name
+    ORDER BY client_id;
+    
+    -- Creating Stored Procedures
+	DELIMITER $$
+	CREATE PROCEDURE invoices_with_balance()
+	BEGIN
+			SELECT *
+            FROM invoices
+            WHERE invoice_total - payment_total > 0;
+	END $$
+    DELIMITER ;
+
+-- Procedure with Parameters
+DROP PROCEDURE IF EXISTS get_inovices_by_client;
+DELIMITER $$
+CREATE PROCEDURE get_invoices_by_client
+( 
+	client_id INT
+)
+BEGIN 
+		SELECT *
+        FROM invoices i
+        WHERE i.client_id = client_id;
+END$$
+DELIMITER ;
+CALL get_invoices_by_client(5);
+
+-- DEFAULT PARAMETERS
+DROP PROCEDURE IF EXISTS get_payments;
+DELIMITER $$
+CREATE PROCEDURE get_payments
+(
+	client_id INT,
+    payment_method_id TINYINT
+)
+BEGIN	
+		SELECT *
+        FROM payments p
+        WHERE P.client_id = IFNULL(client_id,p.client_id) AND 
+        p.payment_method = IFNULL(payment_method_id ,p.payment_method);
+END$$
+DELIMITER ;
+CALL get_payments(3,1)
